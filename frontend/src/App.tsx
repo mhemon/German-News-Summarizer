@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { InputForm } from './components/InputForm';
 import { ResultsCard } from './components/ResultsCard';
-import { analyzeArticle, healthCheck } from './lib/api';
+import { API_BASE, analyzeArticle, healthCheck } from './lib/api';
 import { AnalyzeRequest, AnalyzeResponse } from './types/api';
 
 function App() {
@@ -11,10 +11,16 @@ function App() {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    // Check if backend is available
-    healthCheck()
-      .then(() => setIsConnected(true))
-      .catch(() => setIsConnected(false));
+    const checkBackend = () => {
+      healthCheck()
+        .then(() => setIsConnected(true))
+        .catch(() => setIsConnected(false));
+    };
+
+    checkBackend();
+    // Retry periodically to recover from backend cold starts in production.
+    const intervalId = window.setInterval(checkBackend, 20000);
+    return () => window.clearInterval(intervalId);
   }, []);
 
   const handleAnalyze = async (request: AnalyzeRequest) => {
@@ -24,9 +30,11 @@ function App() {
     try {
       const response = await analyzeArticle(request);
       setResults(response);
+      setIsConnected(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
       setResults(null);
+      setIsConnected(false);
     } finally {
       setIsLoading(false);
     }
@@ -43,7 +51,7 @@ function App() {
           </p>
           {!isConnected && (
             <div className="mt-4 inline-flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-300 rounded-full text-amber-800 text-sm">
-              ⚠️ Backend connection unavailable. Please ensure the backend server is running on port 8000.
+              ⚠️ Backend connection unavailable. Current API target: {API_BASE}/health
             </div>
           )}
         </div>

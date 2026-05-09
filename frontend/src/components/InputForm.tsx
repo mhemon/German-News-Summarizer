@@ -26,7 +26,17 @@ export function InputForm({ onSubmit, isLoading = false }: InputFormProps) {
 Trotz globaler Herausforderungen verzeichnet das Bruttoinlandsprodukt ein Wachstum von 1,5%. 
 Experten führen dies auf langfristige Investitionen und den Aufschwung im Exportsektor zurück. 
 Die Beschäftigung bleibt auf hohem Niveau, wobei die Arbeitslosenquote unter 4% liegt.`;
+    
     setInput(exampleText);
+    
+    // Automatically submit the example
+    setTimeout(() => {
+      onSubmit({
+        input: exampleText.trim(),
+        mode: 'auto',
+        summary_length: summaryLength,
+      });
+    }, 0);
   };
 
   return (
