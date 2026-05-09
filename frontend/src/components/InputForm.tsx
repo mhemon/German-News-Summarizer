@@ -10,6 +10,16 @@ export function InputForm({ onSubmit, isLoading = false }: InputFormProps) {
   const [input, setInput] = useState('');
   const [summaryLength, setSummaryLength] = useState<'short' | 'medium' | 'detailed'>('medium');
 
+  const examples = [
+    `Die deutsche Wirtschaft ist im vierten Quartal 2024 überraschend stabil geblieben. Trotz globaler Herausforderungen verzeichnet das Bruttoinlandsprodukt ein Wachstum von 1,5%. Experten führen dies auf langfristige Investitionen und den Aufschwung im Exportsektor zurück. Die Beschäftigung bleibt auf hohem Niveau, wobei die Arbeitslosenquote unter 4% liegt.`,
+    
+    `Berlin führt strikte Regeln für den Klimaschutz ein. Ab 2025 sollen alle neuen Gebäude mit erneuerbaren Energien ausgestattet werden. Umweltministerin Stefanie Lemke sieht darin einen wichtigen Schritt zur Erreichung der Klimaziele. Die Baubranche reagiert mit gemischten Gefühlen auf die neue Regelung, da sie zusätzliche Kosten mit sich bringt.`,
+    
+    `Der Deutsche Fußball-Bund hat einen neuen Trainer ernannt. Die Wahl fiel auf Julian Nagelsmann, der zuletzt beim FC Bayern München tätig war. Mit dieser Entscheidung hofft der DFB, die nationale Mannschaft wieder auf Erfolgskurs zu bringen. Fans und Experten haben hohe Erwartungen an die kommende Europameisterschaft.`,
+    
+    `Ein innovatives Technologie-Startup aus München erhält eine Finanzierung von 50 Millionen Euro. Das Unternehmen entwickelt künstliche Intelligenz für die Medizindiagnose. Investoren sehen großes Potenzial in der Anwendung dieser Technologie zur Früherkennung von Krankheiten. Experten erwarten, dass dies die Medizinbranche revolutionieren könnte.`
+  ];
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -22,10 +32,8 @@ export function InputForm({ onSubmit, isLoading = false }: InputFormProps) {
   };
 
   const handleExample = () => {
-    const exampleText = `Die deutsche Wirtschaft ist im vierten Quartal 2024 überraschend stabil geblieben. 
-Trotz globaler Herausforderungen verzeichnet das Bruttoinlandsprodukt ein Wachstum von 1,5%. 
-Experten führen dies auf langfristige Investitionen und den Aufschwung im Exportsektor zurück. 
-Die Beschäftigung bleibt auf hohem Niveau, wobei die Arbeitslosenquote unter 4% liegt.`;
+    const randomIndex = Math.floor(Math.random() * examples.length);
+    const exampleText = examples[randomIndex];
     
     setInput(exampleText);
     
