@@ -1,162 +1,77 @@
-# German News Summarizer
+# 📰 German News Summarizer
 
-A full-stack AI portfolio project demonstrating NLP capabilities with German news summarization.
+An AI-powered application that extracts, analyzes, and summarizes German news articles. Get key insights, entity recognition, and automated translations in seconds.
 
-## Project Structure
+## ✨ Features
 
-```
-german-news-summarizer/
-├── frontend/                 # React + Vite + TypeScript + Tailwind
-│   ├── src/
-│   ├── package.json
-│   ├── vite.config.ts
-│   └── index.html
-├── backend/                  # FastAPI + Python
-│   ├── app/
-│   ├── main.py
-│   └── requirements.txt
-└── README.md
-```
+- **Article Analysis** — Extract and analyze German news articles by URL or direct text input
+- **Dual Language Summaries** — Automatic summaries in both German and English
+- **Named Entity Recognition** — Identify people, organizations, and locations mentioned in articles
+- **Keyword Extraction** — Automatically extract relevant keywords and topics
+- **Tone Analysis** — Detect article sentiment and tone
+- **Reading Time Estimation** — Quick overview of article length
 
-## Quick Start
+## 🚀 Live Demo
 
-### Backend Setup
+[**Try the application**](https://german-news-summarizer.vercel.app) — Input any German news article and get instant analysis.
 
-```bash
-# Navigate to backend directory
-cd backend
+## 🏗️ Technology Stack
 
-# Create virtual environment
-python -m venv venv
+| Layer | Technologies |
+|-------|--------------|
+| **Frontend** | React, TypeScript, Vite, Tailwind CSS |
+| **Backend** | FastAPI, Python |
+| **NLP** | spaCy, Hugging Face Transformers, Language Detection |
+| **Deployment** | Vercel (Frontend), Render/Railway/Fly (Backend) |
 
-# Activate virtual environment
-# On Windows:
-.\venv\Scripts\python.exe -m pip install --upgrade pip setuptools wheel
-.\venv\Scripts\python.exe -m pip install --only-binary=:all: -r requirements.txt
-# On macOS/Linux:
-python -m pip install --upgrade pip setuptools wheel
-python -m pip install -r requirements.txt
+## 💡 How It Works
 
-# Run server
-# On Windows:
-.\venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-# On macOS/Linux:
-python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-```
+1. **Input** — Provide a German news article URL or paste text directly
+2. **Processing** — The backend extracts content, detects language, and runs NLP analysis
+3. **Output** — Receive structured analysis including summaries, entities, keywords, and tone
 
-Backend will be available at: http://localhost:8000
+### Example API Response
 
-### Frontend Setup
-
-```bash
-# Navigate to frontend directory
-cd frontend
-
-# Install dependencies
-# On Windows PowerShell:
-npm.cmd install
-# On macOS/Linux:
-npm install
-
-# Run development server
-# On Windows PowerShell:
-npm.cmd run dev
-# On macOS/Linux:
-npm run dev
-```
-
-Frontend will be available at: http://localhost:5173
-
-## Deployment
-
-### Frontend on Vercel
-
-1. Push this repository to GitHub.
-2. In Vercel, create a new project and set the root directory to `frontend`.
-3. Use defaults:
-  - Build command: `npm run build`
-  - Output directory: `dist`
-4. Add environment variable in Vercel:
-  - `VITE_API_BASE_URL=https://YOUR_BACKEND_DOMAIN/api`
-5. Deploy.
-
-### Backend hosting (Render/Railway/Fly)
-
-Vercel is ideal for the React frontend. Host FastAPI backend on a Python host such as Render.
-
-Set backend environment variables:
-
-- `CORS_ORIGINS=https://YOUR_VERCEL_APP.vercel.app,http://localhost:5173`
-- `APP_URL=https://YOUR_VERCEL_APP.vercel.app`
-
-Run command:
-
-`uvicorn app.main:app --host 0.0.0.0 --port 8000`
-
-After backend deployment, update Vercel `VITE_API_BASE_URL` to the backend URL and redeploy frontend.
-
-### Testing the Connection
-
-1. Start the backend (runs on port 8000)
-2. Start the frontend (runs on port 5173)
-3. The frontend will proxy API requests to `http://localhost:8000/api`
-4. You should see a green connection status in the header
-5. Enter an article URL or text and click "Analyze Article"
-
-## API Endpoints
-
-### `GET /api/health`
-Health check endpoint.
-
-**Response:**
-```json
-{
-  "status": "ok"
-}
-```
-
-### `POST /api/analyze`
-Analyze an article and return summaries and NLP analysis.
-
-**Request:**
-```json
-{
-  "input": "https://example.com/article or article text",
-  "mode": "auto",
-  "summary_length": "medium"
-}
-```
-
-**Response:**
 ```json
 {
   "title": "Article Title",
   "source": "Der Spiegel",
   "language": "de",
-  "article_text": "Extracted article content...",
   "reading_time_minutes": 4,
-  "german_summary": "German summary...",
-  "english_summary": "English summary...",
-  "keywords": ["keyword1", "keyword2"],
+  "german_summary": "Concise German summary...",
+  "english_summary": "Concise English summary...",
+  "keywords": ["keyword1", "keyword2", "keyword3"],
   "entities": {
-    "people": ["Person 1"],
-    "organizations": ["Org 1"],
-    "locations": ["Location 1"]
+    "people": ["Person 1", "Person 2"],
+    "organizations": ["Organization 1"],
+    "locations": ["Berlin", "Munich"]
   },
   "tone": "neutral"
 }
 ```
 
-## Stack
+## 📊 Use Cases
 
-- **Frontend:** React, Vite, TypeScript, Tailwind CSS
-- **Backend:** FastAPI, Python
-- **NLP:** (To be integrated) spaCy, Hugging Face Transformers, LLM APIs
+- **Content Curation** — Quickly summarize multiple articles
+- **Research** — Extract key information from German news sources
+- **Language Learning** — Compare German and English versions side-by-side
+- **News Monitoring** — Identify key entities and topics across articles
+- **Content Analysis** — Understand article tone and structure
 
-## Next Steps
+## 🎯 Project Goals
 
-1. Integrate real article extraction (trafilatura)
-2. Add language detection (langdetect)
-3. Implement German/English summarization
-4. Add NER and keyword extraction
-5. Deploy to Hugging Face Spaces or similar
+This is a full-stack AI portfolio project demonstrating:
+- Modern web development practices (React, FastAPI)
+- NLP and machine learning integration
+- Full-stack deployment and DevOps
+- Production-ready API design
+
+## 📝 License
+
+[Add your license here]
+
+## 👤 About
+
+Built as a portfolio project to showcase full-stack development and NLP capabilities.
+
+For development setup and contribution guidelines, see [DEVELOPMENT.md](DEVELOPMENT.md).
