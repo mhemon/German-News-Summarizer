@@ -1,20 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { InputForm } from './components/InputForm';
 import { ResultsCard } from './components/ResultsCard';
 import { API_BASE, analyzeArticle, healthCheck } from './lib/api';
 import { AnalyzeRequest, AnalyzeResponse } from './types/api';
 
+const MAX_CONSECUTIVE_HEALTH_CHECK_FAILURES = 2;
+
 function App() {
   const [results, setResults] = useState<AnalyzeResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState<boolean | null>(null);
+  const consecutiveHealthCheckFailures = useRef(0);
 
   useEffect(() => {
     const checkBackend = () => {
       healthCheck()
-        .then(() => setIsConnected(true))
-        .catch(() => setIsConnected(false));
+        .then(() => {
+          consecutiveHealthCheckFailures.current = 0;
+          setIsConnected(true);
+        })
+        .catch(() => {
+          consecutiveHealthCheckFailures.current += 1;
+
+          if (consecutiveHealthCheckFailures.current >= MAX_CONSECUTIVE_HEALTH_CHECK_FAILURES) {
+            setIsConnected(false);
+          }
+        });
     };
 
     checkBackend();
@@ -34,7 +46,6 @@ function App() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred');
       setResults(null);
-      setIsConnected(false);
     } finally {
       setIsLoading(false);
     }
@@ -49,7 +60,7 @@ function App() {
           <p className="text-slate-600 mt-2 text-lg">
             Summarize German news articles in German and English
           </p>
-          {!isConnected && (
+          {isConnected === false && (
             <div className="mt-4 inline-flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-300 rounded-full text-amber-800 text-sm">
               ⚠️ Backend connection unavailable. Current API target: {API_BASE}/health
             </div>
