@@ -2,7 +2,7 @@ import { AnalyzeRequest, AnalyzeResponse } from '../types/api';
 
 export const API_BASE = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 
-const REQUEST_TIMEOUT_MS = 30000;
+const REQUEST_TIMEOUT_MS = 90000; // was 30000
 
 async function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
   const controller = new AbortController();
@@ -25,20 +25,34 @@ async function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit): P
 }
 
 export async function analyzeArticle(request: AnalyzeRequest): Promise<AnalyzeResponse> {
-  const response = await fetchWithTimeout(`${API_BASE}/analyze`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(request),
-  });
+  let lastError: unknown;
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.detail || 'Failed to analyze article');
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const response = await fetchWithTimeout(`${API_BASE}/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+      });
+
+      // Server still waking up -> retry once
+      if ([502, 503, 504].includes(response.status) && attempt === 0) {
+        await new Promise((r) => setTimeout(r, 3000));
+        continue;
+      }
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.detail || `Request failed (HTTP ${response.status})`);
+      }
+      return response.json();
+    } catch (err) {
+      lastError = err;
+      if (attempt === 0 && err instanceof TypeError) continue; // network error: retry
+      throw err;
+    }
   }
-
-  return response.json();
+  throw lastError;
 }
 
 export async function healthCheck(): Promise<{ status: string }> {
