@@ -12,7 +12,7 @@ def health_check():
 
 
 @router.post("/analyze", response_model=AnalyzeResponse)
-async def analyze(request: AnalyzeRequest):
+def analyze(request: AnalyzeRequest):
     """
     Analyze a German news article.
 
