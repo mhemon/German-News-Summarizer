@@ -5,6 +5,7 @@ from app.services.language import LanguageService
 from app.services.summarization import SummarizationService
 from app.services.text_cleaning import TextCleaningService
 from app.utils.helpers import estimate_reading_time, is_url
+from concurrent.futures import ThreadPoolExecutor
 
 
 class AnalysisService:
@@ -34,15 +35,11 @@ class AnalysisService:
 
         language = LanguageService.detect_language(article_text)
 
-        german_summary = SummarizationService.summarize_german(
-            text=article_text,
-            summary_length=summary_length,
-        )
-        english_summary = SummarizationService.summarize_english(
-            text=article_text,
-            summary_length=summary_length,
-            source_language=language,
-        )
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            de_future = pool.submit(SummarizationService.summarize_german, article_text, summary_length)
+            en_future = pool.submit(SummarizationService.summarize_english, article_text, summary_length, language)
+            german_summary = de_future.result()
+            english_summary = en_future.result()
 
         keywords = EnrichmentService.extract_keywords(article_text, language=language)
         entity_result = EnrichmentService.extract_entities(article_text)
